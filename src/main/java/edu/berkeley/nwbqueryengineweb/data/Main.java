@@ -7,8 +7,6 @@ import edu.berkeley.nwbqueryengineweb.data.dao.SearchPythonDao;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /***********************************************************************************************************************
  *
@@ -54,15 +52,15 @@ public class Main {
         for(String query : queries) {
 
             File[] indexerDaoFiles = indexerDao.getFiles();
-            double indexerResult = make(query, indexerDaoFiles, indexerDao);
+            double indexerResult = runQuery(query, indexerDaoFiles, indexerDao);
 
 
             File[] nwbDaoFiles = nwbDao.getFiles();
             String tmpQuery = query.replaceAll("\\*/", "");
-            double nwbResult = make(tmpQuery, nwbDaoFiles, nwbDao);
+            double nwbResult = runQuery(tmpQuery, nwbDaoFiles, nwbDao);
 
             File[] searchPythonDaoFiles = searchPythonDao.getFiles();
-            double searchNwb = make(query, searchPythonDaoFiles, searchPythonDao);
+            double searchNwb = runQuery(query, searchPythonDaoFiles, searchPythonDao);
 
 
             System.out.println(query + ";" + indexerResult + ";" + nwbResult + ";" + searchNwb);
@@ -72,7 +70,7 @@ public class Main {
 
     }
 
-    public static double make(String query, File[] files, GenericDao dao) throws Exception {
+    public static double runQuery(String query, File[] files, GenericDao dao) throws Exception {
         int count = 10;
         long[] array = new long[count];
         for(int i = 0; i < array.length; i++) {
