@@ -7,6 +7,8 @@ import edu.berkeley.nwbqueryengineweb.data.dao.SearchPythonDao;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /***********************************************************************************************************************
  *
@@ -38,7 +40,8 @@ public class Main {
 
         System.loadLibrary("HDFql");
 
-        String[] queries = {"epochs:(start_time>200 & stop_time<400 | stop_time>1600)",
+        String[] queries = {
+        "epochs:(start_time>200 & stop_time<400 | stop_time>1600)",
         "*/data: (unit == \"unknown\")",
         "/general/subject: (subject_id == \"anm00210863\") & */epochs/*: (start_time > 500 & start_time < 550 & tags LIKE \"%LickEarly%\")",
         "/units: (id > -1 & location == \"CA3\" & quality > 0.8)",
@@ -47,7 +50,7 @@ public class Main {
         GenericDao indexerDao = new IndexerDao();
         GenericDao nwbDao = new NwbDao();
         GenericDao searchPythonDao = new SearchPythonDao();
-        System.out.println("Tools comparision results");
+        System.out.println("Tools comparison results");
         System.out.println(";NWB Indexer;NWB Query Engine;Search NWB");
         for(String query : queries) {
 
@@ -56,8 +59,7 @@ public class Main {
 
 
             File[] nwbDaoFiles = nwbDao.getFiles();
-            String tmpQuery = query.replaceAll("\\*/", "");
-            double nwbResult = runQuery(tmpQuery, nwbDaoFiles, nwbDao);
+            double nwbResult = runQuery(query, nwbDaoFiles, nwbDao);
 
             File[] searchPythonDaoFiles = searchPythonDao.getFiles();
             double searchNwb = runQuery(query, searchPythonDaoFiles, searchPythonDao);
@@ -71,18 +73,20 @@ public class Main {
     }
 
     public static double runQuery(String query, File[] files, GenericDao dao) throws Exception {
-        int count = 10;
+        int count = 1;
+        List completeRes = new LinkedList();
         long[] array = new long[count];
         for(int i = 0; i < array.length; i++) {
             long timeStart = System.currentTimeMillis();
             for (File file : files) {
-                dao.getData(query, file);
+                List res = dao.getData(query, file);
+                completeRes.addAll(res);
             }
             long timeConsumed = System.currentTimeMillis() - timeStart;
             array[i] = timeConsumed;
         }
 
-        return findAverageUsingStream(array);
+        return completeRes.size() == 0 ? 0 : findAverageUsingStream(array);
 
 
     }
