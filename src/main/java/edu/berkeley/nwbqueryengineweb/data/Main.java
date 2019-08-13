@@ -41,9 +41,9 @@ public class Main {
         System.loadLibrary("HDFql");
 
         String[] queries = {
-        "epochs:(start_time>200 & stop_time<400 | stop_time>1600)",
+        "/epochs/*:(start_time>200 & stop_time<400 | stop_time>1600)",
         "*/data: (unit == \"unknown\")",
-        "/general/subject: (subject_id == \"anm00210863\") & */epochs/*: (start_time > 500 & start_time < 550 & tags LIKE \"%LickEarly%\")",
+        "/general/subject: (subject_id == \"anm00210863\") & /epochs/*: (start_time > 500 & start_time < 550 & tags LIKE \"%LickEarly%\")",
         "/units: (id > -1 & location == \"CA3\" & quality > 0.8)",
         "/general:(virus LIKE \"%infectionLocation: M2%\")"};
 
